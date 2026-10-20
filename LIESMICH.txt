@@ -1,0 +1,49 @@
+MEIN KLEIDERSCHRANK - PWA
+
+1) HOCHLADEN (kostenlos, ca. 2 Minuten)
+   Zip entpacken, dann den ganzen Ordner auf https://app.netlify.com/drop ziehen.
+   Du bekommst eine Adresse wie https://dein-name.netlify.app
+   (Alternative: GitHub Pages. Wichtig ist nur: Adresse mit https.)
+
+2) AUF DEN HOMESCREEN
+   Adresse im Handy-Browser oeffnen:
+   - Android/Chrome: Menue (drei Punkte) > "App installieren" oder "Zum Startbildschirm hinzufuegen"
+   - iPhone/Safari: Teilen-Symbol > "Zum Home-Bildschirm"
+   Danach laeuft sie wie eine App, auch ohne Internet.
+
+3) ALS APK (optional, nur Android)
+   Auf https://www.pwabuilder.com deine Adresse eingeben, "Package for stores" > Android waehlen
+   und die APK herunterladen. Zum Installieren muss "Installation aus unbekannten Quellen" erlaubt sein.
+
+HINWEIS: Fotos und Outfits werden im Browser-Speicher dieser Adresse abgelegt.
+Daten aus der Version auf claude.ai werden nicht uebernommen. Beim Loeschen der
+Browserdaten gehen sie verloren.
+
+------------------------------------------------------------
+UPDATE AUF VERSION 2 (Wetter, KI, Foto verbessern)
+- Bestehende Netlify-Seite: im Netlify-Konto "Deploys" oeffnen und den neuen Ordner
+  hineinziehen. Gleiche Adresse = deine Fotos und Outfits bleiben erhalten.
+- Wetter: unter "Heute" Standort erlauben oder in den Einstellungen eine Stadt eingeben.
+- KI (optional): in den Einstellungen deinen API-Schluessel von console.anthropic.com
+  eintragen. Kostet nach Verbrauch. Ohne Schluessel gibt es Wetter, einen Regel-Vorschlag
+  und manuelle Eingabe von Beschreibung, Material und Waerme.
+- Foto verbessern: tippe ein Teil im Schrank an. Hellt auf, erhoeht den Kontrast und
+  macht einen einfarbigen Hintergrund weiss. Mit "Original" wird es zurueckgesetzt.
+
+
+ERWEITERUNG 3 (Beratung, Farbberatung, Freistellung, Wetter morgen)
+- Neuer Reiter „Beratung“ bündelt Farbberatung, Outfit-Beratung anhand der Kleidungsfotos, Outfit-Generierung und Kaufberatung.
+- „Heute“ zeigt nun Wetter und Vorschläge für heute UND morgen.
+- Im Detail eines Kleidungsstücks gibt es „Hintergrund freistellen“. Das ist eine lokale, einfache Freistellung für einfarbige/ruhige Hintergründe; komplexe Hintergründe können ungenaue Kanten ergeben. Prüfe das Ergebnis und nutze „Original“, falls nötig.
+- KI-Beratung benötigt weiterhin einen Claude-API-Schlüssel und verursacht verbrauchsabhängige Kosten. Die Bilder werden zur KI-Analyse an Anthropic gesendet, wenn du eine Beratung startest.
+- Nach dem Update bitte die Seite einmal neu laden. Der Service Worker wurde auf Cache-Version 3 aktualisiert.
+
+
+ERWEITERUNG 4 (Planungsansicht)
+- Der Planen-Reiter zeigt Kategorie-Kacheln mit Symbolen und Anzahl der vorhandenen Teile.
+- Ausgewählte Kleidungsstücke werden als Vorschau angezeigt; Outfit-Name und Speichern sind direkt darunter.
+- Gespeicherte Looks erscheinen im Reiter Outfits als Bild-Collage und können bearbeitet werden.
+- Der Wetter-Reiter enthält Wetter heute, heutige Empfehlung, Wetter morgen und morgige Empfehlung.
+- Service-Worker-Cache auf Version 4 erhöht, damit die neue Oberfläche nach Veröffentlichung geladen wird.
+
+UPDATE: Lade den INHALT des Ordners pwa in dein vorhandenes Repository hoch und ersetze gleichnamige Dateien. Vorher nach Möglichkeit vorhandene Outfits sichern.

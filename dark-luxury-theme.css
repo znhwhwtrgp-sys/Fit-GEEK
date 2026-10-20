@@ -1,0 +1,51 @@
+/* Fit-GEEK Dark Luxury theme patch
+   Append to the END of the existing app stylesheet (do not replace app code). */
+:root {
+  color-scheme: dark;
+  --fg-bg: #111110;
+  --fg-surface: #1b1a18;
+  --fg-card: #23211e;
+  --fg-border: #39342e;
+  --fg-text: #f4eee5;
+  --fg-muted: #b7ada0;
+  --fg-gold: #d3ad78;
+  --fg-gold-light: #f0d2a2;
+}
+html, body {
+  background: var(--fg-bg);
+  color: var(--fg-text);
+}
+body {
+  background-image: radial-gradient(ellipse at top, rgba(211,173,120,.08), transparent 48%);
+}
+header, nav, .header, .topbar, .bottom-nav, .nav-bar {
+  background: rgba(17,17,16,.94);
+  border-color: var(--fg-border);
+  backdrop-filter: blur(18px);
+}
+button, .btn, [role="button"] {
+  border-radius: 14px;
+  transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+button:active, .btn:active, [role="button"]:active { transform: scale(.985); }
+button.primary, .btn-primary, .active, [aria-current="page"] {
+  border-color: rgba(211,173,120,.72);
+}
+.card, .panel, .tile, .modal, .sheet, .item-card, .outfit-card {
+  background: linear-gradient(145deg, rgba(38,35,31,.98), rgba(25,24,22,.98));
+  border: 1px solid var(--fg-border);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.18);
+}
+input, select, textarea {
+  color: var(--fg-text);
+  background: #191816;
+  border: 1px solid #494137;
+  border-radius: 12px;
+}
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid rgba(211,173,120,.45);
+  border-color: var(--fg-gold);
+}
+a { color: var(--fg-gold-light); }
+.muted, .subtitle, small { color: var(--fg-muted); }

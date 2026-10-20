@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#171513">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Kleiderschrank">
+<title>Fit-GEEK — Dein digitaler Kleiderschrank</title>
+<style>
+:root{--bg:#eef0ec;--card:#fff;--ink:#1d2320;--mute:#68716c;--line:#d9ddd6;--acc:#2d5a4c;--on:#fff;--sel:#2d5a4c;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141816;--card:#1e2420;--ink:#eef1ee;--mute:#9aa49e;--line:#303733;--acc:#86c9b2;--on:#10211a;--sel:#86c9b2}}
+:root[data-theme="dark"]{--bg:#141816;--card:#1e2420;--ink:#eef1ee;--mute:#9aa49e;--line:#303733;--acc:#86c9b2;--on:#10211a;--sel:#86c9b2}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);padding:14px 16px 0;border-bottom:1px solid var(--line)}
+h1{margin:0 0 10px;font:600 26px/1.1 "Iowan Old Style",Georgia,serif;letter-spacing:-.01em}
+nav{display:flex;gap:4px;max-width:720px}
+nav button{flex:1;border:0;background:none;color:var(--mute);font-weight:600;font-size:15px;font-family:inherit;padding:10px 4px;border-bottom:3px solid transparent;cursor:pointer}
+nav button.on{color:var(--ink);border-color:var(--acc)}
+main{max-width:720px;margin:0 auto;padding:16px}
+.bar{display:flex;gap:8px;margin-bottom:12px}
+select,input[type=text]{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;min-width:0}
+.bar select{flex:1}
+.btn{font-weight:600;font-size:15px;font-family:inherit;background:var(--acc);color:var(--on);border:0;border-radius:10px;padding:10px 14px;cursor:pointer}
+.ghost{font-weight:600;font-size:14px;font-family:inherit;background:none;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:6px}
+.chip{flex:none;font-weight:500;font-size:14px;font-family:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:99px;padding:6px 12px;cursor:pointer}
+.chip.on{background:var(--acc);color:var(--on);border-color:var(--acc)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.card{position:relative;background:var(--card);border:2px solid var(--line);border-radius:12px;overflow:hidden}
+.card img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;background:#fff}
+.card select{width:100%;border:0;border-top:1px solid var(--line);border-radius:0;font-size:14px;padding:8px}
+.pick{cursor:pointer}
+.pick.on{border-color:var(--sel)}
+.pick.on::after{content:"✓";position:absolute;left:6px;top:6px;width:24px;height:24px;border-radius:50%;background:var(--sel);color:var(--on);font-weight:700;text-align:center;line-height:24px}
+.pick .cat{padding:6px 8px;font-size:13px;color:var(--mute)}
+.x{position:absolute;right:6px;top:6px;border:0;border-radius:99px;min-width:28px;height:28px;padding:0 8px;background:rgba(20,24,22,.72);color:#fff;font-weight:600;font-size:14px;font-family:inherit;cursor:pointer}
+.x.armed{background:#b3261e}
+.prev{display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px}
+.pv{position:relative;flex:none;width:96px}
+.pv img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:#fff}
+.form{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.form input{flex:1 1 180px}
+.sub{margin:18px 0 8px;font:600 17px "Iowan Old Style",Georgia,serif}
+.empty{color:var(--mute);text-align:center;padding:28px 12px;margin:0}
+.ogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.oc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px}
+.col{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-bottom:8px}
+.col img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:6px;background:#fff}
+.oc b{display:block}
+.oc small{color:var(--mute)}
+.oa{display:flex;gap:6px;margin-top:8px}
+.note{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:12px;font-size:14px;color:var(--mute)}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:.2s;z-index:20}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){#toast{transition:none}}
+.planner-cats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:10px 0 16px}.planner-cat{display:flex;flex-direction:column;align-items:center;gap:7px;padding:12px 6px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);font:inherit;cursor:pointer}.planner-cat .bubble{display:grid;place-items:center;width:54px;height:54px;border-radius:50%;background:#e4e9e1;border:2px solid #9eae9b;font-size:26px}.planner-cat.on{border:2px solid var(--acc);background:color-mix(in srgb,var(--acc) 8%,var(--card))}.planner-cat small{color:var(--mute);font-size:12px}.plan-preview{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:14px}.plan-preview .prev{justify-content:center}.plan-preview .pv{width:84px}.plan-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}.top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}.top h1{margin:0}
+.wx{display:flex;gap:16px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+.wx .big{font:600 52px/1 "Iowan Old Style",Georgia,serif}
+.wx small,.hint{color:var(--mute);font-size:14px}
+.why{margin:0 0 12px;padding:10px 12px;border-left:3px solid var(--acc);background:var(--card);border-radius:0 10px 10px 0}
+.dsc{padding:6px 8px 0;font-size:13px;color:var(--mute);line-height:1.3;min-height:2.6em}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.ed,.set{display:grid;gap:12px}
+.ed img{width:100%;max-width:300px;aspect-ratio:3/4;object-fit:cover;border-radius:12px;border:1px solid var(--line);background:#fff;justify-self:center}
+.ed label{display:grid;gap:4px;font-weight:600;font-size:14px}
+.ed textarea,.ed input[type=text],.set input{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;width:100%}
+
+/* FIT-GEEK DARK LUXURY REDESIGN — CSS-only skin; app logic and IndexedDB remain unchanged */
+:root{color-scheme:dark;--bg:#171513;--card:#24211e;--ink:#f4eee5;--mute:#b0a69a;--line:#403931;--acc:#c7a875;--on:#191613;--sel:#d6b982}
+@media (prefers-color-scheme:light){:root:not([data-theme="light"]){--bg:#171513;--card:#24211e;--ink:#f4eee5;--mute:#b0a69a;--line:#403931;--acc:#c7a875;--on:#191613;--sel:#d6b982}}
+:root[data-theme="dark"]{--bg:#171513;--card:#24211e;--ink:#f4eee5;--mute:#b0a69a;--line:#403931;--acc:#c7a875;--on:#191613;--sel:#d6b982}
+body{background:var(--bg);color:var(--ink);letter-spacing:.005em}
+header{background:rgba(23,21,19,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+h1{font-size:28px;letter-spacing:.015em}
+nav{gap:2px}nav button{font-size:13px;padding:12px 3px 11px}nav button.on{color:var(--acc);border-color:var(--acc)}
+main{padding:18px 15px 28px}
+.btn{background:var(--acc);color:var(--on);border-radius:12px;box-shadow:0 3px 12px #0003}
+.ghost,.chip,.planner-cat,.card,.oc,.plan-preview,.wx,.note{border-color:var(--line);background:var(--card);color:var(--ink)}
+.chip{border-radius:999px}.chip.on,.planner-cat.on{background:#3b3022;border-color:var(--acc);color:#f4eee5}
+.planner-cat .bubble{background:#352d23;border-color:#776346;color:#e0c596}
+.card{border-width:1px;border-radius:14px;box-shadow:0 4px 16px #0002}.card img{background:#302b26}.pick.on{border:2px solid var(--acc)}
+.x{background:rgba(15,13,12,.85)}
+.pv img,.col img,.ed img{background:#302b26;border-color:var(--line)}
+select,input[type=text],.ed textarea,.ed input[type=text],.set input{background:#211e1b;color:var(--ink);border-color:#51463a;border-radius:12px}
+.sub{font-size:19px;letter-spacing:.01em}.wx{box-shadow:0 5px 20px #0002}.wx .big{color:var(--acc)}
+.why{border-left-color:var(--acc);background:#211e1b}
+#toast{background:var(--acc);color:#191613}
+::selection{background:#80663e;color:#fff}
+@media(min-width:600px){main{padding:24px}.grid{gap:14px}.oc{padding:14px}}
+
+
+/* FIT-GEEK DARK LUXURY — full interface layer */
+:root{
+ --bg:#100f0e;--card:#1a1917;--card2:#211f1c;--ink:#f4eee5;--mute:#aaa096;
+ --line:#37312a;--acc:#c9a875;--on:#17130e;--sel:#d8b780;
+ color-scheme:dark;
+}
+html,body{min-height:100%;background:var(--bg)}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.005em;background:
+ radial-gradient(ellipse at 50% -20%,rgba(169,126,72,.13),transparent 46%),var(--bg);
+ padding-bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+body::before{background:#100f0e}
+.app-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;padding:10px 18px 0;background:rgba(16,15,14,.94);backdrop-filter:blur(18px);border-bottom:1px solid rgba(201,168,117,.18)}
+.brandbar{display:flex;align-items:center;gap:11px;max-width:760px;margin:0 auto;padding:4px 0 12px}
+.brand-mark{width:37px;height:37px;border:1px solid #806747;border-radius:12px;display:grid;place-items:center;color:#e2c08d;font:28px/1 Georgia,serif;background:linear-gradient(145deg,#2a2621,#11100f);box-shadow:inset 0 1px 0 #ffffff15}
+.brand-copy{display:flex;flex-direction:column;gap:2px;min-width:0}
+.brand-name{font:25px/1 Georgia,"Times New Roman",serif;letter-spacing:.045em;color:#e4c18e}
+.brand-subtitle{font-size:8px;letter-spacing:.19em;color:#a99a86}
+.settings-button{margin-left:auto;border:1px solid var(--line);background:#1b1916;color:#d9bd91;border-radius:50%;width:38px;height:38px;font-size:17px}
+.app-header nav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;gap:3px;max-width:none;margin:0 auto;overflow-x:auto;scrollbar-width:none;padding:7px 8px calc(7px + env(safe-area-inset-bottom,0px));background:rgba(17,16,14,.96);backdrop-filter:blur(20px);border-top:1px solid rgba(201,168,117,.24);box-shadow:0 -12px 32px #0005}
+.app-header nav::-webkit-scrollbar{display:none}
+.app-header nav button{display:flex;flex:1 0 58px;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:0;border-bottom:2px solid transparent;background:transparent;color:#8f877d;font-size:10px;font-weight:600;letter-spacing:.02em;padding:8px 3px 10px;white-space:nowrap}
+.app-header nav button .nav-ico{font-size:19px;line-height:1;color:#aaa092}
+.app-header nav button.on{color:#e2c08d;border-color:#c9a875}
+.app-header nav button.on .nav-ico{color:#e2c08d}
+main{max-width:760px;padding:20px 16px 34px;margin:0 auto}
+h1,h2,h3,.sub{font-family:Georgia,"Times New Roman",serif;font-weight:500;letter-spacing:-.025em}
+h1{font-size:30px;color:#f4eee5}
+.sub{font-size:22px;color:#f0e7da;margin:24px 0 11px}
+p,.hint{color:#b7aea3}
+.btn{background:linear-gradient(135deg,#e0c18f,#b48a52);color:#21180e;border:1px solid #e4c89c;border-radius:999px;padding:11px 17px;box-shadow:0 5px 18px #0003}
+.ghost{background:#201d19;color:#dfc49a;border:1px solid #4a4033;border-radius:999px}
+select,input[type=text],input[type=password],textarea{background:#1c1a17;color:#f1e8dc;border:1px solid #423a30;border-radius:12px}
+.chips{gap:8px;padding:5px 0 13px}
+.chip{background:#1b1916;border:1px solid #3d352b;color:#c2b6a6;border-radius:999px;padding:8px 14px;font-size:12px}
+.chip.on{background:#d6b47e;color:#20170e;border-color:#d6b47e}
+.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{background:linear-gradient(155deg,#24211d,#171614);border:1px solid #393229;border-radius:17px;box-shadow:0 9px 24px #0002}
+.card img{aspect-ratio:4/4.5;background:#25211b;object-fit:cover}
+.card .dsc{padding:9px 10px 6px;font-size:13px;color:#e5d8c5;min-height:33px}
+.card select{background:#1a1815;border-top:1px solid #383127;border-radius:0 0 16px 16px;font-size:12px}
+.x{background:rgba(13,12,11,.8);border:1px solid #65513a;color:#e7c48e}
+.pick.on{border-color:#d9b77d;box-shadow:0 0 0 1px #d9b77d}
+.pick.on::after{background:#d9b77d;color:#21170b}
+.plan-preview,.note,.oc,.set,.wx,.weather-card,.weather-block{background:linear-gradient(145deg,#24211d,#171614)!important;border:1px solid #3c342a!important;border-radius:18px!important;color:#eee3d3;box-shadow:0 12px 28px #0002}
+.plan-preview{padding:14px}
+.ogrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.oc{padding:11px}
+.oc b{font:18px Georgia,serif;color:#eee1cf;margin:7px 0 3px}
+.col{gap:5px}
+.col img{border-radius:9px;background:#29241e}
+.oa{flex-wrap:wrap}
+.oa button{flex:1}
+.note{padding:15px;margin:12px 0}
+.empty{padding:30px 16px;color:#b4a99a}
+.form{gap:9px}
+#toast{background:#e1c08b;color:#1a140c;box-shadow:0 10px 30px #0008}
+.bar{align-items:center}
+.bar select{border-radius:999px;padding:11px 13px}
+.planner-cats{gap:10px}
+.planner-cat{background:linear-gradient(145deg,#24211d,#171614);border:1px solid #3b332a;border-radius:17px;color:#eee3d3;padding:14px 5px}
+.planner-cat .bubble{background:#30271c;border:1px solid #6e5637;color:#e1bd84}
+.planner-cat.on{border-color:#d2ae75;background:#2b241a}
+.pv{width:104px}
+.pv img{border-radius:12px;border-color:#44392b}
+.wx{padding:15px!important}
+.wx b{color:#e9d0a6}
+section{scroll-margin-top:130px}
+@media(min-width:600px){
+ main{padding:28px 22px 40px}
+ .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .ogrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:480px){
+ .app-header{padding-left:13px;padding-right:13px}
+ .brand-name{font-size:24px}
+ main{padding:18px 13px 30px}
+ .grid{gap:9px}
+ .card{border-radius:14px}
+ .card img{aspect-ratio:1/1.08}
+ .sub{font-size:21px}
+ .app-header nav button{font-size:9px;flex-basis:52px}
+}
+@media(prefers-reduced-motion:no-preference){
+ .card,.oc,.planner-cat,.note{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+ .card:active,.planner-cat:active{transform:scale(.985)}
+}
+\n</style>
+
+<style>
+.page-intro{padding:8px 2px 17px}
+.eyebrow{font-size:9px;letter-spacing:.23em;color:#c6a574;font-weight:700;margin-bottom:10px}
+.eyebrow span{padding:0 5px;color:#79654b}
+.page-intro h1{font-size:clamp(29px,7vw,38px);line-height:1.04;margin:0 0 8px}
+.page-intro p{font-size:13px;margin:0;color:#a89e91}
+.home-shortcuts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:3px 0 22px}
+.shortcut{display:flex;flex-direction:column;align-items:flex-start;text-align:left;min-height:118px;padding:15px;border:1px solid #3b3329;border-radius:17px;background:linear-gradient(145deg,#25211c,#171614);color:#eee3d3}
+.shortcut>span{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:#30271c;color:#e0bd86;font-size:21px;margin-bottom:11px}
+.shortcut b{font:17px Georgia,serif;font-weight:500;margin-bottom:4px}
+.shortcut small{color:#a99e8e;font-size:11px}
+</style>
+\n
+<style>
+.editorial-hero{position:relative;overflow:hidden;display:flex;align-items:stretch;min-height:220px;margin:0 0 24px;border:1px solid #51412c;border-radius:22px;background:radial-gradient(ellipse at 100% 10%,#6a4a2c 0,transparent 44%),linear-gradient(130deg,#2a241d 0%,#171513 70%);box-shadow:0 18px 36px #0004}
+.hero-copy{position:relative;z-index:2;width:65%;padding:20px 0 20px 18px}
+.hero-kicker,.section-kicker{font-size:9px;font-weight:700;letter-spacing:.2em;color:#d5b27b}
+.hero-copy h2{max-width:290px;margin:10px 0;font:500 clamp(24px,6vw,34px)/1.04 Georgia,serif;letter-spacing:-.03em;color:#f2e7d5}
+.hero-copy p{max-width:245px;font-size:11px;line-height:1.55;color:#b9aa96;margin:0 0 16px}
+.hero-copy .btn{font-size:11px;padding:10px 13px;white-space:nowrap}
+.hero-copy .btn span{font-size:15px;padding-left:5px}
+.hero-wardrobe{position:absolute;right:-10px;bottom:0;width:42%;height:100%;display:flex;align-items:center;justify-content:center;gap:5px;transform:rotate(-3deg)}
+.hero-wardrobe img{width:44%;height:78%;object-fit:cover;border-radius:12px;border:1px solid #a98758;box-shadow:0 12px 25px #0008;background:#28221a}
+.hero-wardrobe img:nth-child(2){transform:translateY(-12px) rotate(5deg)}
+.hero-wardrobe img:nth-child(3){transform:translateY(13px) rotate(7deg)}
+.hero-symbol{position:absolute;right:15px;bottom:-42px;color:#c6a16d;font:180px/1 Georgia,serif;opacity:.25}
+.section-kicker{margin:0 0 10px 2px}
+.home-shortcuts{margin-top:0}
+.app-header nav button{min-width:0}
+@media(min-width:760px){
+ .app-header nav{left:50%;right:auto;transform:translateX(-50%);width:min(760px,100%);border:1px solid #44392b;border-bottom:0;border-radius:18px 18px 0 0}
+ .editorial-hero{min-height:245px}
+}
+@media(max-width:370px){.hero-copy{width:72%;padding-left:14px}.hero-copy h2{font-size:23px}.hero-wardrobe{right:-28px;width:45%;opacity:.86}.hero-copy .btn{font-size:10px}}
+</style>
+\n</head>
+<body>
+<header class="app-header">
+  <div class="brandbar">
+    <div class="brand-mark" aria-hidden="true">⌁</div>
+    <div class="brand-copy"><span class="brand-name">Fit-GEEK</span><span class="brand-subtitle">DEIN DIGITALER KLEIDERSCHRANK</span></div>
+    <button class="settings-button" data-act="tab" data-v="einst" aria-label="Einstellungen" title="Einstellungen">⚙</button>
+  </div>
+  <nav aria-label="Hauptnavigation">
+    <button data-act="tab" data-v="heute"><span class="nav-ico">⌂</span><span>Home</span></button>
+    <button data-act="tab" data-v="schrank"><span class="nav-ico">▤</span><span>Schrank</span></button>
+    <button data-act="tab" data-v="planen"><span class="nav-ico">✧</span><span>Planen</span></button>
+    <button data-act="tab" data-v="outfits"><span class="nav-ico">▧</span><span>Outfits</span></button>
+    <button data-act="tab" data-v="beratung"><span class="nav-ico">✦</span><span>Beratung</span></button>
+  </nav>
+</header>
+<main id="main"></main>
+<input type="file" id="file" accept="image/*" multiple hidden>
+<div id="toast" role="status"></div>
+<script>
+const CATS=['Oberteile','Hosen','Jacken','Schuhe','Accessoires'];
+const SUBCATS={'Oberteile':['T-Shirt','Top','Hemd','Bluse','Pullover','Hoodie','Zipper'],'Hosen':['Kurze Hose','Lange Hose'],'Jacken':['Jacke','Mantel'],'Schuhe':['Schuhe'],'Accessoires':['Accessoire']};
+const subOpts=(cat,v)=>((SUBCATS[cat]||[]).map(s=>`<option${s===v?' selected':''}>${esc(s)}</option>`).join(''));
+const normItem=i=>{if(i.cat==='Hosen & Röcke')i.cat='Hosen';if(i.cat==='Kleider'){i.cat='Oberteile';i.subcat='Pullover'}if(!i.subcat)i.subcat=(i.cat==='Oberteile'?'T-Shirt':i.cat==='Hosen'?'Lange Hose':(SUBCATS[i.cat]||[''])[0]);return i;};
+const S={tab:'heute',key:'',loc:null,w:null,wm:null,werr:false,sug:[],why:'',ai:false,edit:null,busy:new Set(),items:[],outfits:[],filter:'Alle',newCat:CATS[0],sel:[],name:'',editId:null,armed:null,persist:true,advice:''};
+const main=document.getElementById('main'),$=s=>document.querySelector(s);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const byId=id=>S.items.find(i=>i.id===id);
+const opts=v=>CATS.map(c=>`<option${c===v?' selected':''}>${esc(c)}</option>`).join('');
+const chips=()=>['Alle',...CATS].map(c=>`<button class="chip${S.filter===c?' on':''}" data-act="filter" data-v="${esc(c)}">${esc(c)}</button>`).join('');
+const shown=()=>S.items.filter(i=>S.filter==='Alle'||i.cat===S.filter);
+const order=a=>a.slice().sort((x,y)=>CATS.indexOf(x.cat)-CATS.indexOf(y.cat));
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2200)}
+
+/* Speicher: IndexedDB im Browser, nur auf diesem Gerät */
+let idb=null;
+function openDB(){return new Promise(r=>{try{const q=indexedDB.open('kleiderschrank',1);q.onupgradeneeded=()=>{q.result.createObjectStore('items',{keyPath:'id'});q.result.createObjectStore('outfits',{keyPath:'id'})};q.onsuccess=()=>r(q.result);q.onerror=()=>r(null);q.onblocked=()=>r(null)}catch(e){r(null)}})}
+const store=(s,m)=>idb.transaction(s,m).objectStore(s);
+const loadAll=s=>new Promise(r=>{if(!idb)return r([]);try{const q=store(s,'readonly').getAll();q.onsuccess=()=>r(q.result||[]);q.onerror=()=>r([])}catch(e){r([])}});
+function put(s,o){if(!idb)return;try{store(s,'readwrite').put(o)}catch(e){S.persist=false}}
+function del(s,id){if(!idb)return;try{store(s,'readwrite').delete(id)}catch(e){}}
+
+function shrink(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const k=Math.min(1,640/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL('image/jpeg',.82))};im.onerror=()=>{URL.revokeObjectURL(u);rej()};im.src=u})}
+
+function vSchrank(){
+  const l=shown();
+  return `<div class="bar"><select id="newcat" aria-label="Kategorie für neue Teile">${opts(S.newCat)}</select><button class="btn" data-act="add">+ Fotos hinzufügen</button></div>
+  <div class="chips">${chips()}</div>`+(l.length?`<div class="grid">${l.map(i=>`<div class="card"><img data-act="open" data-id="${i.id}" style="cursor:pointer" src="${i.img}" alt="${esc(i.cat)}"><div class="dsc">${S.busy.has(i.id)?'KI analysiert …':esc(i.desc||'Tippen zum Beschreiben')}</div><button class="x${S.armed==='i'+i.id?' armed':''}" data-act="delItem" data-id="${i.id}" aria-label="Teil löschen">${S.armed==='i'+i.id?'Löschen?':'×'}</button><select data-act="recat" data-id="${i.id}" aria-label="Kategorie ändern">${opts(i.cat)}</select><select data-act="subcat" data-id="${i.id}" aria-label="Unterkategorie ändern">${subOpts(i.cat,i.subcat)}</select></div>`).join('')}</div>`
+  :`<p class="empty">${S.items.length?'In dieser Kategorie ist noch nichts.':'Dein Kleiderschrank ist noch leer. Fotografiere deine Kleidung, am besten vor ruhigem Hintergrund, und lade die Bilder hoch.'}</p>`);
+}
+function vPlanen(){
+  const p=order(S.sel.map(byId).filter(Boolean)),l=shown();
+  const categoryIcons={'Oberteile':'👕','Hosen':'👖','Jacken':'🧥','Schuhe':'👟','Accessoires':'👜'};
+  const counts=Object.fromEntries(CATS.map(c=>[c,S.items.filter(i=>i.cat===c).length]));
+  return `<h2 class="sub" style="margin-top:0">Outfit planen</h2><p class="hint">Wähle deine Kleidungsstücke aus und kombiniere sie zu einem Look. Speichere ihn anschließend unter „Outfits“.</p>
+  <div class="plan-preview"><b>${p.length?`${p.length} Teile ausgewählt`:'Dein Look'}</b>${p.length?`<div class="prev">${p.map(i=>`<div class="pv"><img src="${i.img}" alt="${esc(i.desc||i.cat)}"><button class="x" data-act="tog" data-id="${i.id}" aria-label="Aus Outfit entfernen">×</button><div class="dsc">${esc(i.desc||i.cat)}</div></div>`).join('')}</div>`:'<p class="empty" style="padding:10px">Tippe auf eine Kategorie und wähle Kleidungsstücke aus.</p>'}
+  <div class="form" style="margin:8px 0 0"><input type="text" id="oname" placeholder="Name, z. B. Casual am Wochenende" value="${esc(S.name)}" maxlength="60" aria-label="Name des Outfits"><button class="btn" data-act="save">${S.editId?'Änderungen speichern':'Outfit speichern'}</button>${p.length||S.editId?'<button class="ghost" data-act="clear">Leeren</button>':''}</div></div>
+  <h2 class="sub">Kategorien</h2><div class="planner-cats">${CATS.map(c=>`<button class="planner-cat${S.filter===c?' on':''}" data-act="filter" data-v="${esc(c)}"><span class="bubble">${categoryIcons[c]}</span><b>${esc(c)}</b><small>${counts[c]} Teile</small></button>`).join('')}</div>
+  <div class="chips"><button class="chip${S.filter==='Alle'?' on':''}" data-act="filter" data-v="Alle">Alle Teile</button>${chips()}</div>
+  ${l.length?`<div class="grid">${l.map(i=>`<div class="card pick${S.sel.includes(i.id)?' on':''}" data-act="tog" data-id="${i.id}"><img src="${i.img}" alt="${esc(i.desc||i.cat)}"><div class="cat">${esc(i.cat)}${i.desc?` · ${esc(i.desc)}`:''}</div></div>`).join('')}</div>`:`<p class="empty">${S.items.length?'In dieser Kategorie ist noch nichts.':'Füge zuerst im Kleiderschrank Fotos hinzu.'}</p>`}`;
+}
+function vOutfits(){
+  if(!S.outfits.length)return '<p class="empty">Noch keine Outfits gespeichert. Stelle unter „Outfit planen“ dein erstes zusammen.</p>';
+  return `<div class="ogrid">${S.outfits.slice().sort((a,b)=>b.ts-a.ts).map(o=>{
+    const it=order(o.items.map(byId).filter(Boolean)),gone=o.items.length-it.length;
+    return `<div class="oc"><div class="col">${it.slice(0,6).map(i=>`<img src="${i.img}" alt="${esc(i.cat)}">`).join('')}</div><b>${esc(o.name)}</b><small>${it.length} Teile${gone?`, ${gone} gelöscht`:''}, ${new Date(o.ts).toLocaleDateString('de-DE')}</small>
+    <div class="oa"><button class="ghost" data-act="edit" data-id="${o.id}">Bearbeiten</button><button class="ghost" data-act="delOut" data-id="${o.id}">${S.armed==='o'+o.id?'Wirklich löschen?':'Löschen'}</button></div></div>`}).join('')}</div>`;
+}
+function render(){
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===S.tab));
+  const note=S.persist?'':'<div class="note">Speichern ist in diesem Browser nicht möglich. Deine Daten bleiben nur bis zum Schließen der Seite erhalten.</div>';
+  const titles={heute:['Dein Look für heute','Stilvoll. Bewusst. Du.'],schrank:['Dein Kleiderschrank','Alles, was deinen Stil ausmacht.'],planen:['Outfit planen','Kombiniere deine Favoriten zu einem Look.'],outfits:['Deine Outfits','Gespeicherte Looks für jeden Anlass.'],beratung:['Stilberatung','Finde Kombinationen, die zu dir passen.'],einst:['Einstellungen','Passe Fit-GEEK an dich an.']};
+  const t=titles[S.tab]||titles.heute;
+  const heading=`<div class="page-intro"><div class="eyebrow">FIT-GEEK <span>·</span> PERSONAL STYLE</div><h1>${t[0]}</h1><p>${t[1]}</p></div>`;
+  const heroItems=S.items.slice(0,3);
+  const homeHero=S.tab==='heute'?`<section class="editorial-hero"><div class="hero-copy"><span class="hero-kicker">DEIN STIL. DEIN TAG.</span><h2>Heute ist ein guter Tag, gut auszusehen.</h2><p>Dein digitaler Kleiderschrank. Deine Kombinationen. Dein Look.</p><button class="btn" data-act="tab" data-v="planen">Look zusammenstellen <span aria-hidden="true">↗</span></button></div>${heroItems.length?`<div class="hero-wardrobe">${heroItems.map(i=>`<img src="${i.img}" alt="${esc(i.desc||i.cat)}">`).join('')}</div>`:`<div class="hero-symbol" aria-hidden="true">⌁</div>`}</section>`:'';
+  const shortcuts=S.tab==='heute'?`<div class="section-kicker">DEIN BEREICH</div><section class="home-shortcuts"><button class="shortcut" data-act="tab" data-v="schrank"><span>▤</span><b>Kleiderschrank</b><small>${S.items.length} Teile im Überblick</small></button><button class="shortcut" data-act="tab" data-v="planen"><span>✧</span><b>Outfit planen</b><small>Neue Looks erstellen</small></button><button class="shortcut" data-act="tab" data-v="outfits"><span>▧</span><b>Meine Outfits</b><small>${S.outfits.length} Looks gespeichert</small></button><button class="shortcut" data-act="tab" data-v="beratung"><span>✦</span><b>Stilberatung</b><small>Farben, Looks & mehr</small></button></section>`:'';
+  main.innerHTML=note+heading+homeHero+shortcuts+({heute:vHeute,schrank:S.edit?vEdit:vSchrank,planen:vPlanen,outfits:vOutfits,beratung:vBeratung,einst:vEinst})[S.tab]();
+}
+function arm(k,fn){if(S.armed===k){S.armed=null;fn()}else{S.armed=k;setTimeout(()=>{if(S.armed===k){S.armed=null;render()}},3000)}render()}
+
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');if(!b||b.tagName==='SELECT')return;
+  const a=b.dataset.act,id=b.dataset.id,v=b.dataset.v;
+  if(a==='tab'){S.tab=v;S.edit=null;S.filter='Alle';render();scrollTo(0,0)}
+  else if(a==='filter'){S.filter=v;if(v!=='Alle')S.newCat=v;render()}
+  else if(a==='add')$('#file').click();
+  else if(A[a])A[a](id,v,b);
+  else if(a==='delItem')arm('i'+id,()=>{S.items=S.items.filter(i=>i.id!==id);S.sel=S.sel.filter(x=>x!==id);del('items',id);render()});
+  else if(a==='delOut')arm('o'+id,()=>{S.outfits=S.outfits.filter(o=>o.id!==id);del('outfits',id);if(S.editId===id){S.editId=null}render();toast('Outfit gelöscht')});
+  else if(a==='tog'){S.sel=S.sel.includes(id)?S.sel.filter(x=>x!==id):[...S.sel,id];render()}
+  else if(a==='clear'){S.sel=[];S.name='';S.editId=null;render()}
+  else if(a==='edit'){const o=S.outfits.find(x=>x.id===id);S.sel=o.items.filter(byId);S.name=o.name;S.editId=o.id;S.tab='planen';S.filter='Alle';render();scrollTo(0,0)}
+  else if(a==='save'){
+    if(!S.sel.length){toast('Wähle zuerst Teile aus');return}
+    const o={id:S.editId||uid(),name:S.name.trim()||'Outfit '+(S.outfits.length+1),items:[...S.sel],ts:Date.now()};
+    S.outfits=[...S.outfits.filter(x=>x.id!==o.id),o];put('outfits',o);
+    S.sel=[];S.name='';S.editId=null;S.tab='outfits';render();scrollTo(0,0);toast('Outfit gespeichert');
+  }
+});
+document.addEventListener('input',e=>{if(e.target.id==='oname')S.name=e.target.value});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.id==='newcat')S.newCat=t.value;
+  else if(t.dataset.act==='recat'){const i=byId(t.dataset.id);if(i){i.cat=t.value;i.subcat=(SUBCATS[i.cat]||[''])[0];put('items',i);render()}}
+  else if(t.dataset.act==='subcat'){const i=byId(t.dataset.id);if(i){i.subcat=t.value;put('items',i);render()}}
+});
+$('#file').addEventListener('change',async e=>{
+  const fs=[...e.target.files];e.target.value='';let n=0;
+  for(const f of fs){try{const it={id:uid(),cat:S.newCat,subcat:(S.newCat==='Oberteile'?'T-Shirt':S.newCat==='Hosen'?'Lange Hose':(SUBCATS[S.newCat]||[''])[0]),img:await shrink(f),ts:Date.now()};S.items.push(it);put('items',it);n++;if(S.key)aiDescribe(it)}catch(x){}}
+  if(S.tab!=='schrank')S.tab='schrank';
+  S.filter='Alle';render();
+  toast(n?`${n} ${n===1?'Teil':'Teile'} hinzugefügt`:'Das Bild konnte nicht gelesen werden');
+});
+(async()=>{
+  idb=await openDB();S.persist=!!idb;try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+  if(idb){S.items=(await loadAll('items')).map(normItem).sort((a,b)=>a.ts-b.ts);S.items.forEach(i=>put('items',i));S.outfits=await loadAll('outfits')}loadSet();if(S.loc)loadWeather();
+  render();
+})();
+
+/* ===== Wetter, KI, Foto-Verbesserung ===== */
+const MODEL='claude-haiku-4-5-20251001';
+const WT=c=>c===0?'Klar':c<3?'Heiter':c===3?'Bedeckt':c<50?'Nebel':c<60?'Nieselregen':c<68?'Regen':c<78?'Schnee':c<83?'Regenschauer':c<87?'Schneeschauer':'Gewitter';
+function loadSet(){try{S.key=localStorage.getItem('kl_key')||'';S.loc=JSON.parse(localStorage.getItem('kl_loc')||'null')}catch(e){}}
+function saveSet(){try{localStorage.setItem('kl_key',S.key||'');localStorage.setItem('kl_loc',JSON.stringify(S.loc))}catch(e){}}
+async function loadWeather(){
+  if(!S.loc)return;S.werr=false;
+  try{const j=await(await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${S.loc.lat}&longitude=${S.loc.lon}&current=temperature_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=2`)).json();
+    const c=j.current,d=j.daily,pp=d.precipitation_probability_max[0]||0;
+    S.w={t:c.temperature_2m,feel:c.apparent_temperature,code:c.weather_code,wind:c.wind_speed_10m,min:d.temperature_2m_min[0],max:d.temperature_2m_max[0],pp,rain:pp>=50||c.precipitation>0.1};
+    S.wm={code:d.weather_code[1],min:d.temperature_2m_min[1],max:d.temperature_2m_max[1],pp:d.precipitation_probability_max[1]||0,rain:(d.precipitation_probability_max[1]||0)>=50,date:d.time[1]};S.sug=[]}
+  catch(e){S.werr=true}
+  render();
+}
+async function claude(content,max=500){
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':S.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MODEL,max_tokens:max,messages:[{role:'user',content}]})});
+  const j=await r.json();if(!r.ok)throw new Error((j.error&&j.error.message)||r.status);
+  return JSON.parse(j.content.map(c=>c.text||'').join('').match(/\{[\s\S]*\}/)[0]);
+}
+async function aiDescribe(it){
+  S.busy.add(it.id);render();
+  try{const j=await claude([{type:'image',source:{type:'base64',media_type:it.img.startsWith('data:image/png')?'image/png':'image/jpeg',data:it.img.split(',')[1]}},{type:'text',text:`Das Foto zeigt ein Kleidungsstück. Antworte nur mit JSON ohne Erklärung: {"kategorie":"genau eine aus: ${CATS.join(' | ')}","unterkategorie":"bei Oberteile: T-Shirt, Top, Hemd, Bluse, Pullover, Hoodie oder Zipper; bei Hosen: Kurze Hose oder Lange Hose; sonst passende Unterkategorie","beschreibung":"höchstens 12 Wörter auf Deutsch, Farbe und Schnitt","material":"geschätzte Zusammensetzung, z. B. 80 % Baumwolle, 20 % Polyester","waerme":Zahl von 1 (sehr leicht) bis 5 (sehr warm),"wasserfest":true oder false}`}]);
+    if(CATS.includes(j.kategorie))it.cat=j.kategorie;it.subcat=j.unterkategorie||it.subcat||((it.cat==='Oberteile')?'T-Shirt':(it.cat==='Hosen')?'Lange Hose':(SUBCATS[it.cat]||[''])[0]);
+    it.desc=j.beschreibung||'';it.mat=j.material||'';it.warm=Math.min(5,Math.max(1,+j.waerme||2));it.wp=!!j.wasserfest;it.ai=true;put('items',it);S.sug=[]}
+  catch(e){toast('KI-Analyse fehlgeschlagen: '+String(e.message||e).slice(0,70))}
+  S.busy.delete(it.id);render();
+}
+function mixNow(weather=S.w){
+  if(!weather){S.sug=[];return}
+  const tg=weather.feel!==undefined?(weather.feel<0?5:weather.feel<8?4:weather.feel<15?3:weather.feel<22?2:1):(weather.max<5?4:weather.max<14?3:weather.max<22?2:1);
+  const score=i=>-Math.abs((i.warm||2)-tg)*2+(weather.rain&&i.wp?3:0)+(i.desc?0.3:0);
+  const pick=c=>S.items.filter(i=>i.cat===c).sort((a,b)=>score(b)-score(a))[0]||null;
+  let r=[pick('Oberteile'),pick('Hosen')];
+  if(tg>=3||weather.rain)r.push(pick('Jacken'));r.push(pick('Schuhe'));if(tg>=4)r.push(pick('Accessoires'));
+  S.sug=r.filter(Boolean).map(i=>i.id);S.ai=false;
+  S.why=`Aus deinem Schrank nach Wärmegrad ${tg}/5${weather.rain?' und Regenfestigkeit':''} ausgewählt. Die Teile sind nach deinen gespeicherten Angaben sortiert; Farben und Stil kannst du in „Beratung“ prüfen lassen.`;
+}
+function enhance(src){return new Promise(res=>{const im=new Image();im.onload=()=>{
+  const W=im.width,H=im.height,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.drawImage(im,0,0);
+  const d=x.getImageData(0,0,W,H),p=d.data,m=new Uint8Array(W*H);
+  const cs=[[0,0],[W-1,0],[0,H-1],[W-1,H-1]].map(([a,b])=>{const i=(b*W+a)*4;return[p[i],p[i+1],p[i+2]]});
+  const bg=[0,1,2].map(j=>cs.reduce((u,q)=>u+q[j],0)/4),spread=Math.max(...cs.map(q=>Math.abs(q[0]-bg[0])+Math.abs(q[1]-bg[1])+Math.abs(q[2]-bg[2])));
+  if(spread<50){
+    const st=[],near=k=>{const i=k*4;return Math.abs(p[i]-bg[0])+Math.abs(p[i+1]-bg[1])+Math.abs(p[i+2]-bg[2])<60};
+    const push=(a,b)=>{const k=b*W+a;if(!m[k]&&near(k)){m[k]=1;st.push(k)}};
+    for(let a=0;a<W;a++){push(a,0);push(a,H-1)}for(let b=0;b<H;b++){push(0,b);push(W-1,b)}
+    while(st.length){const k=st.pop(),a=k%W,b=(k-a)/W;if(a>0)push(a-1,b);if(a<W-1)push(a+1,b);if(b>0)push(a,b-1);if(b<H-1)push(a,b+1)}
+  }
+  const h=new Uint32Array(256);let n=0;for(let k=0;k<W*H;k++)if(!m[k]){const i=k*4;h[(p[i]*.3+p[i+1]*.59+p[i+2]*.11)|0]++;n++}
+  let lo=0,hi=255,t=0;while(lo<254&&(t+=h[lo])<n*.02)lo++;t=0;while(hi>1&&(t+=h[hi])<n*.02)hi--;
+  const g=255/Math.max(40,hi-lo),cl=v=>Math.max(0,Math.min(255,v));
+  for(let k=0;k<W*H;k++){const i=k*4;if(m[k]){p[i]=p[i+1]=p[i+2]=255;continue}
+    const q=[0,1,2].map(j=>cl((p[i+j]-lo)*g)),l=q[0]*.3+q[1]*.59+q[2]*.11;for(let j=0;j<3;j++)p[i+j]=cl(l+(q[j]-l)*1.12)}
+  x.putImageData(d,0,0);res(c.toDataURL('image/jpeg',.85))};im.onerror=()=>res(src);im.src=src})}
+
+function weatherBlock(title,w,kind){
+  if(!w)return `<h2 class="sub">${title}</h2><p class="empty">${S.werr?'Wetter konnte nicht geladen werden.':'Wetter wird geladen …'}</p>`;
+  const temp=kind==='today'&&w.feel!==undefined?`Gefühlt ${Math.round(w.feel)}° · `:'';
+  const date=kind==='tomorrow'&&w.date?new Date(w.date+'T12:00:00').toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'}):'';
+  return `<h2 class="sub">${title}</h2><div class="wx"><div class="big">${Math.round(kind==='today'&&w.t!==undefined?w.t:(w.max+w.min)/2)}°</div><div><b>${WT(w.code)}${date?', '+esc(date):''}</b><br><small>${temp}${Math.round(w.min)}° bis ${Math.round(w.max)}° · Regenwahrscheinlichkeit ${w.pp}%${kind==='today'&&w.wind!==undefined?' · Wind '+Math.round(w.wind)+' km/h':''}</small></div></div>`;
+}
+function weatherSuggestion(w,kind){
+  if(!S.items.length)return '<p class="empty">Füge zuerst Kleidung im Kleiderschrank hinzu.</p>';
+  const old=S.w; if(kind==='today'&&!S.sug.filter(byId).length)mixNow(w);
+  let ids=kind==='today'?S.sug.filter(byId):suggestForWeather(w);
+  const p=order(ids.map(x=>typeof x==='string'?byId(x):x).filter(Boolean));
+  return `${p.length?`<div class="prev">${p.map(i=>`<div class="pv"><img src="${i.img}" alt="${esc(i.cat)}"><div class="dsc" style="padding:4px 0 0">${esc(i.desc||i.cat)}</div></div>`).join('')}</div><p class="why">${kind==='today'?esc(S.why):'Vorschlag anhand der vorhergesagten Temperaturen und Regenwahrscheinlichkeit. Wärmegrad und Regentauglichkeit deiner Teile werden berücksichtigt.'}</p>`:'<p class="empty">Für diese Wetterlage fehlen passende Teile im Schrank.</p>'}<div class="row"><button class="ghost" data-act="tab" data-v="beratung">Farben & Stil prüfen</button>${S.key?`<button class="btn" data-act="weatherai" data-v="${kind}">KI-Outfit verfeinern</button>`:''}</div>`;
+}
+function suggestForWeather(w){const tg=w.max<5?4:w.max<14?3:w.max<22?2:1;const score=i=>-Math.abs((i.warm||2)-tg)*2+(w.rain&&i.wp?3:0);const pick=c=>S.items.filter(i=>i.cat===c).sort((a,b)=>score(b)-score(a))[0]||null;let r=[pick('Oberteile'),pick('Hosen')];if(tg>=3||w.rain)r.push(pick('Jacken'));r.push(pick('Schuhe'));if(tg>=4)r.push(pick('Accessoires'));return r.filter(Boolean)}
+function vHeute(){
+  if(!S.loc)return '<div class="wx"><div><b>Wetter für deinen Ort</b><br><small>Lege deinen Standort fest, damit ich Empfehlungen für heute und morgen anzeigen kann.</small></div></div><div class="form"><button class="btn" data-act="geo">Standort verwenden</button><button class="ghost" data-act="tab" data-v="einst">Stadt eingeben</button></div>';
+  if(S.werr)return '<div class="wx">Das Wetter konnte nicht geladen werden. Prüfe deine Internetverbindung.</div><button class="ghost" data-act="reload">Erneut versuchen</button>';
+  if(!S.w)return '<div class="wx">Wetter wird geladen …</div>';
+  return `<p class="hint">${esc(S.loc.name)}</p>${weatherBlock('Wetter Heute',S.w,'today')}<h2 class="sub">Empfehlung für heutiges Wetter</h2>${weatherSuggestion(S.w,'today')}${weatherBlock('Wetter Morgen',S.wm,'tomorrow')}<h2 class="sub">Empfehlung für morgiges Wetter</h2>${S.wm?weatherSuggestion(S.wm,'tomorrow'):'<p class="empty">Morgenprognose wird geladen …</p>'}`;
+}
+function vBeratung(){
+ const has=S.items.length>0;
+ return `<h2 class="sub" style="margin-top:0">Deine Stilberatung</h2><p class="hint">Alle textbasierten Beratungen an einem Ort. KI-Funktionen nutzen deinen gespeicherten Schrank und benötigen deinen Claude-API-Schlüssel in den Einstellungen.</p>
+ <section class="note"><b>Outfit-Beratung per Bild</b><p>Wähle Kleidungsstücke im Schrank aus und lasse Farben, Proportionen und Stil anhand der vorhandenen Fotos beurteilen.</p><button class="btn" data-act="advise">Ausgewählte Outfits beraten</button> <button class="ghost" data-act="tab" data-v="planen">Outfit zusammenstellen</button></section>
+ <section class="note"><b>Farbberatung</b><p>Prüft die erkannten oder eingetragenen Farben auf harmonische Kombinationen und Kontraste.</p><button class="btn" data-act="colors">Farben analysieren</button></section>
+ <section class="note"><b>Outfit generieren</b><p>Erstellt ein Outfit aus deinen vorhandenen Teilen – basierend auf Beschreibung, Kategorie, Wärmegrad, Material, Regenfestigkeit und Wetter, nicht per Zufall.</p><button class="btn" data-act="generate">Outfit passend zum Wetter erstellen</button></section>
+ <section class="note"><b>Kaufberatung</b><p>Bevor du etwas kaufst, prüft die Beratung, welche ähnlichen Teile du schon besitzt und welche Lücke ein neues Kleidungsstück tatsächlich schließen könnte.</p><button class="btn" data-act="buyadvice">Kaufberatung starten</button></section>
+ <div id="advice-result" class="why" aria-live="polite">${S.advice?esc(S.advice):'Deine Analyse erscheint hier.'}</div>${S.sug.filter(byId).length?'<div class="row"><button class="btn" data-act="sugsave">Vorgeschlagenes Outfit speichern</button></div>':''}
+ ${!has?'<p class="empty">Füge zuerst Kleidungsstücke mit Fotos hinzu.</p>':''}`;
+}
+
+function vEdit(){
+  const i=byId(S.edit);if(!i){S.edit=null;return vSchrank()}
+  const L=['','Sehr leicht','Leicht','Mittel','Warm','Sehr warm'];
+  return `<div class="row" style="margin-bottom:12px"><button class="ghost" data-act="back">Zurück</button></div><div class="ed"><img src="${i.img}" alt="">
+  <div class="row" style="justify-content:center"><button class="btn" data-act="cutout">Hintergrund freistellen</button><button class="ghost" data-act="enh">Foto verbessern</button>${i.orig?'<button class="ghost" data-act="orig">Original</button>':''}${S.key?'<button class="ghost" data-act="ai1">KI neu beschreiben</button>':''}</div>
+  ${S.busy.has(i.id)?'<p class="hint">KI analysiert …</p>':i.ai?'<p class="hint">Von der KI erstellt. Bitte prüfen und bei Bedarf ausbessern.</p>':''}
+  <label>Beschreibung<textarea data-f="desc" rows="2">${esc(i.desc||'')}</textarea></label>
+  <label>Material<input type="text" data-f="mat" value="${esc(i.mat||'')}" placeholder="z. B. 80 % Baumwolle, 20 % Polyester"></label>
+  <label>Kategorie<select data-f="cat">${opts(i.cat)}</select></label>
+  <label>Wärme<select data-f="warm">${[1,2,3,4,5].map(n=>`<option value="${n}"${(i.warm||2)===n?' selected':''}>${n}: ${L[n]}</option>`).join('')}</select></label>
+  <label style="display:flex;align-items:center;gap:8px;font-weight:500"><input type="checkbox" data-f="wp" style="width:auto"${i.wp?' checked':''}> Wasserfest, regentauglich</label></div>`;
+}
+function vEinst(){
+  return `<div class="set"><h2 class="sub" style="margin-top:0">Ort fürs Wetter</h2><p class="hint">Aktuell: ${S.loc?esc(S.loc.name):'nicht festgelegt'}</p>
+  <div class="form"><input type="text" id="city" placeholder="Stadt, z. B. Forchheim" aria-label="Stadt"><button class="btn" data-act="city">Suchen</button><button class="ghost" data-act="geo">Standort verwenden</button></div>
+  <h2 class="sub">KI-Funktionen</h2><p class="hint">Beschreibung, Material und Outfit-Empfehlung nutzen die Claude-API. Dafür brauchst du einen eigenen API-Schlüssel von console.anthropic.com, abgerechnet wird nach Verbrauch. Der Schlüssel bleibt nur auf diesem Gerät. Ohne Schlüssel funktionieren Wetter, der Regel-Vorschlag und die manuelle Eingabe weiter.</p>
+  <input type="password" id="key" placeholder="sk-ant-…" value="${esc(S.key)}" autocomplete="off" aria-label="API-Schlüssel">
+  <div class="row"><button class="btn" data-act="savekey">Schlüssel speichern</button>${S.key?'<button class="ghost" data-act="delkey">Entfernen</button>':''}</div></div>`;
+}
+async function runAdvice(kind,weather){
+ if(!S.key){toast('Bitte zuerst in Einstellungen den Claude-API-Schlüssel eintragen');S.tab='einst';render();return}
+ if(!S.items.length){toast('Füge zuerst Kleidungsstücke hinzu');return}
+ const w=weather||(S.w||{});const list=S.items.map(i=>({id:i.id,kategorie:i.cat,beschreibung:i.desc||'nicht beschrieben',material:i.mat||'unbekannt',waerme:i.warm||2,wasserfest:!!i.wp,farbe:i.color||'aus Bild/Beschreibung ableiten',stil:i.style||'nicht angegeben'}));
+ const task={color:'Analysiere harmonische Farbkombinationen aus diesem Kleiderschrank. Nenne konkrete Teile anhand ihrer IDs, passende Farbpaare, neutrale Basisfarben und Kombinationen, die eher kollidieren könnten.',outfit:'Berate ein Outfit anhand der gespeicherten Kleidungsinformationen und Fotos. Beurteile Farbharmonie, Stil, Proportionen und Anlass. Falls keine Teile im Plan ausgewählt sind, nutze passende Teile aus dem Schrank.',generate:'Generiere ein konkretes, stimmiges Outfit ausschließlich aus vorhandenen IDs. Berücksichtige Kategorie, Farbe, Stil, Material, Wärmegrad und Regenfestigkeit sowie das Wetter. Nicht zufällig auswählen. Gib IDs und Begründung zurück.',buy:'Erstelle eine Kaufberatung: Welche Kategorien/Farben/Funktionen sind im Schrank bereits mehrfach vertreten? Welche sinnvolle Lücke gibt es? Wann lohnt sich ein Kauf, wann wäre er redundant? Keine pauschalen Kaufempfehlungen.',weather:'Erstelle eine konkrete Outfit-Empfehlung ausschließlich aus vorhandenen IDs für die angegebene Wetterlage. Begründe Wärme, Regenfestigkeit, Farbkombination und Stil.'}[kind];
+ const weatherText=w&&w.max!==undefined?`Wetter: ${WT(w.code||0)}, ${Math.round(w.min)}–${Math.round(w.max)} °C, Regenwahrscheinlichkeit ${w.pp||0} %, Regen erwartet: ${w.rain?'ja':'eher nein'}.`:'Wetterdaten derzeit nicht verfügbar.';
+ const selected=S.sel.map(byId).filter(Boolean).map(i=>i.id);
+ const prompt=`Du bist eine sorgfältige persönliche Stilberaterin. Verwende nur die Kleidungsstücke und IDs in der Liste. Erfinde keine vorhandenen Kleidungsstücke. ${task}
+${weatherText}
+Ausgewählte Outfit-IDs: ${selected.join(', ')||'keine'}.
+Kleiderschrank als JSON:
+${JSON.stringify(list)}
+Antworte ausschließlich als JSON mit den Feldern {"ids":["vorhandene-id"],"text":"deutsche Beratung in klaren Absätzen, konkrete Begründung und Hinweise auf Unsicherheiten"}. Bei Kaufberatung und Farbberatung darf ids leer sein.`;
+ toast('Beratung wird erstellt …');try{const imageItems=(kind==='outfit'&&selected.length?S.items.filter(i=>selected.includes(i.id)):S.items).slice(0,8);const content=[];for(const it of imageItems){content.push({type:'text',text:'Foto zum Kleidungsstück mit ID '+it.id+', Kategorie '+it.cat+', Beschreibung '+(it.desc||'keine Beschreibung')+'.'});if(it.img&&it.img.startsWith('data:image/jpeg'))content.push({type:'image',source:{type:'base64',media_type:'image/jpeg',data:it.img.split(',')[1]}});else if(it.img&&it.img.startsWith('data:image/png'))content.push({type:'image',source:{type:'base64',media_type:'image/png',data:it.img.split(',')[1]}})}content.push({type:'text',text:prompt+'\nNutze die jeweils direkt vorher beschrifteten Fotos zur visuellen Farb- und Stilbeurteilung.'});const j=await claude(content,850);if(Array.isArray(j.ids)&&['generate','weather'].includes(kind)){const valid=j.ids.filter(id=>byId(id));if(valid.length){S.sug=valid;S.why=j.text||'';S.ai=true;}}S.advice=j.text||'Keine Beratung erhalten.';S.tab=kind==='weather'?'heute':'beratung';render();}catch(e){toast('Beratung fehlgeschlagen: '+String(e.message||e).slice(0,90))}
+}
+function removeBg(src){
+ // Lokale Näherung: entfernt gleichmäßige, mit dem Bildrand verbundene Hintergründe.
+ // Komplexe Hintergründe benötigen einen spezialisierten KI-Freisteller.
+ return new Promise(resolve=>{const im=new Image();im.onload=()=>{try{const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(im,0,0);const W=c.width,H=c.height,d=x.getImageData(0,0,W,H),p=d.data,m=new Uint8Array(W*H),stack=[];
+ const samples=[];for(const [a,b] of [[0,0],[W-1,0],[0,H-1],[W-1,H-1]]){const k=(b*W+a)*4;samples.push([p[k],p[k+1],p[k+2]])}const bg=[0,1,2].map(j=>samples.reduce((n,v)=>n+v[j],0)/samples.length);const tol=65;
+ const near=k=>{const z=k*4;return Math.abs(p[z]-bg[0])+Math.abs(p[z+1]-bg[1])+Math.abs(p[z+2]-bg[2])<tol};const push=k=>{if(k>=0&&k<W*H&&!m[k]&&near(k)){m[k]=1;stack.push(k)}};
+ for(let a=0;a<W;a++){push(a);push((H-1)*W+a)}for(let b=0;b<H;b++){push(b*W);push(b*W+W-1)}while(stack.length){const k=stack.pop(),a=k%W,b=(k-a)/W;if(a)push(k-1);if(a<W-1)push(k+1);if(b)push(k-W);if(b<H-1)push(k+W)}
+ for(let k=0;k<W*H;k++)if(m[k])p[k*4+3]=0;x.putImageData(d,0,0);resolve(c.toDataURL('image/png'));}catch(e){resolve(src)}};im.onerror=()=>resolve(src);im.src=src;});
+}
+
+const A={
+  open(id){S.edit=id;render();scrollTo(0,0)},
+  back(){S.edit=null;render()},
+  async enh(){const i=byId(S.edit);if(!i)return;toast('Foto wird verbessert …');i.orig=i.orig||i.img;i.img=await enhance(i.img);put('items',i);render()},
+  orig(){const i=byId(S.edit);if(i&&i.orig){i.img=i.orig;delete i.orig;put('items',i);render()}},
+  ai1(){const i=byId(S.edit);if(i)aiDescribe(i)},
+  async cutout(){const i=byId(S.edit);if(!i)return;toast('Hintergrund wird analysiert …');i.orig=i.orig||i.img;i.img=await removeBg(i.img);put('items',i);render();toast('Freistellung erstellt – bitte Ergebnis prüfen')},
+  async colors(){return runAdvice('color')},
+  async advise(){return runAdvice('outfit')},
+  async generate(){if(S.w)mixNow(S.w);return runAdvice('generate')},
+  async buyadvice(){return runAdvice('buy')},
+  async weatherai(id,v,b){const w=v==='tomorrow'?S.wm:S.w;if(!w)return;return runAdvice('weather',w)},
+  mix(){mixNow();render()},
+  reload(){loadWeather()},
+  sugsave(){const o={id:uid(),name:'Outfit vom '+new Date().toLocaleDateString('de-DE'),items:[...S.sug],ts:Date.now()};S.outfits.push(o);put('outfits',o);toast('Outfit gespeichert')},
+  savekey(){S.key=($('#key').value||'').trim();saveSet();render();toast(S.key?'Schlüssel gespeichert':'Kein Schlüssel eingegeben')},
+  delkey(){S.key='';saveSet();render()},
+  geo(){if(!navigator.geolocation){toast('Standortzugriff nicht verfügbar');return}
+    navigator.geolocation.getCurrentPosition(q=>{S.loc={name:'Dein Standort',lat:q.coords.latitude,lon:q.coords.longitude};saveSet();S.w=null;S.sug=[];S.tab='heute';render();loadWeather()},()=>toast('Kein Standortzugriff. Gib stattdessen eine Stadt ein.'),{timeout:10000})},
+  async city(){const q=($('#city').value||'').trim();if(!q)return;
+    try{const j=await(await fetch('https://geocoding-api.open-meteo.com/v1/search?count=1&language=de&name='+encodeURIComponent(q))).json(),r=j.results&&j.results[0];
+      if(!r){toast('Ort nicht gefunden');return}
+      S.loc={name:r.name,lat:r.latitude,lon:r.longitude};saveSet();S.w=null;S.sug=[];S.tab='heute';render();loadWeather()}
+    catch(e){toast('Suche fehlgeschlagen')}},
+  async aisug(){
+    if(!S.key||!S.w)return;toast('Die Stylistin überlegt …');const w=S.w;
+    const list=S.items.map(i=>`${i.id}|${i.cat} (${i.subcat||''})|${i.desc||'-'}|${i.mat||'-'}|Wärme ${i.warm||2}|${i.wp?'wasserfest':'-'}`).join('\n');
+    try{const j=await claude(`Du bist eine Stylistin. Wetter heute: ${WT(w.code)}, ${Math.round(w.t)} °C, gefühlt ${Math.round(w.feel)} °C, ${Math.round(w.min)} bis ${Math.round(w.max)} °C, Regenwahrscheinlichkeit ${w.pp} %, Wind ${Math.round(w.wind)} km/h.\nKleiderschrank (id|Kategorie|Beschreibung|Material|Wärme 1-5|wasserfest):\n${list}\nStelle ein stimmiges Outfit nur aus diesen Teilen zusammen, höchstens ein Teil je Kategorie, kombiniere Oberteil und Hose passend zum Wetter. Antworte nur mit JSON: {"ids":["id1","id2"],"grund":"zwei Sätze auf Deutsch, die Wetter und Material berücksichtigen"}`,500);
+      const ids=(j.ids||[]).filter(byId);if(!ids.length)throw new Error('Keine passenden Teile');
+      S.sug=ids;S.why=j.grund||'';S.ai=true;render()}
+    catch(e){toast('KI-Empfehlung fehlgeschlagen: '+String(e.message||e).slice(0,70))}}
+};
+document.addEventListener('change',e=>{
+  const t=e.target,f=t.dataset&&t.dataset.f;if(!f||!S.edit)return;const i=byId(S.edit);if(!i)return;
+  i[f]=f==='wp'?t.checked:f==='warm'?+t.value:t.value;i.ai=false;put('items',i);if(f!=='desc'&&f!=='mat')S.sug=[];
+});
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+</body>
+</html>
