@@ -253,7 +253,7 @@ const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const byId=id=>S.items.find(i=>i.id===id);
 const opts=v=>CATS.map(c=>`<option${c===v?' selected':''}>${esc(c)}</option>`).join('');
 const chips=()=>['Alle',...CATS].map(c=>`<button class="chip${S.filter===c?' on':''}" data-act="filter" data-v="${esc(c)}">${esc(c)}</button>`).join('');
-const shown=()=>S.items.filter(i=>S.filter==='Alle'||i.cat===S.filter);
+const shown=()=>S.items.filter(i=>S.filter==='Alle'||i.cat===S.filter).slice().sort((a,b)=>(Number(b.ts)||0)-(Number(a.ts)||0)||String(b.id).localeCompare(String(a.id)));
 const order=a=>a.slice().sort((x,y)=>CATS.indexOf(x.cat)-CATS.indexOf(y.cat));
 let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2200)}
 

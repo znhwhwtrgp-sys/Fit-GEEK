@@ -17,3 +17,7 @@ WICHTIG
   Keine Browserdaten löschen und die PWA nicht deinstallieren.
 
 Dateien: index.html, manifest.webmanifest, sw.js, Icons.
+
+SORTIERUNG
+- Im Kleiderschrank erscheinen zuletzt hochgeladene Teile zuerst, auch innerhalb einer ausgewählten Kategorie.
+- Bestehende Zeitstempel und gespeicherte Kleidungsdaten werden nicht verändert.
