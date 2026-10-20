@@ -185,7 +185,7 @@ section{scroll-margin-top:130px}
  .card,.oc,.planner-cat,.note{transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
  .card:active,.planner-cat:active{transform:scale(.985)}
 }
-\n</style>
+</style>
 
 <style>
 .page-intro{padding:8px 2px 17px}
@@ -222,7 +222,22 @@ section{scroll-margin-top:130px}
 }
 @media(max-width:370px){.hero-copy{width:72%;padding-left:14px}.hero-copy h2{font-size:23px}.hero-wardrobe{right:-28px;width:45%;opacity:.86}.hero-copy .btn{font-size:10px}}
 </style>
-\n</head>
+\n
+<style>
+/* Größere, dauerhaft unten sitzende Hauptnavigation */
+body{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+.app-header nav{padding:15px 10px calc(15px + env(safe-area-inset-bottom,0px));gap:5px;min-height:104px;align-items:stretch}
+.app-header nav button{flex:1 0 68px;gap:8px;font-size:15px;padding:12px 4px 14px;border-bottom-width:3px}
+.app-header nav button .nav-ico{font-size:34px;line-height:1.05}
+@media(max-width:480px){
+ .app-header nav{min-height:100px;padding:13px 6px calc(13px + env(safe-area-inset-bottom,0px));gap:2px}
+ .app-header nav button{font-size:13px;flex-basis:58px;padding:10px 2px 12px;gap:7px}
+ .app-header nav button .nav-ico{font-size:30px}
+}
+@media(min-width:760px){.app-header nav{width:min(760px,100%);min-height:108px}}
+</style>
+
+</head>
 <body>
 <header class="app-header">
   <div class="brandbar">
